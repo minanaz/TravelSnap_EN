@@ -1,17 +1,24 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
-import type { GestureResponderEvent } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import type { GestureResponderEvent } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Colors } from '@/constants/Colors';
-import type { TripData } from '@/types/trip';
+import { Colors } from "@/constants/Colors";
+import type { TripData } from "@/types/trip";
 
-import RatingStars from './RatingStars';
+import RatingStars from "./RatingStars";
 
 interface TripCardProps extends TripData {
   onDelete?: () => void;
 }
 
-export default function TripCard({ title, destination, date, rating, onDelete }: TripCardProps) {
+export default function TripCard({
+  title,
+  destination,
+  date,
+  rating,
+  onDelete,
+  imageUri,
+}: TripCardProps) {
   const handleDeletePress = (event: GestureResponderEvent): void => {
     // Prevent parent card press (Link navigation) when deleting.
     event.stopPropagation();
@@ -20,6 +27,9 @@ export default function TripCard({ title, destination, date, rating, onDelete }:
 
   return (
     <View style={styles.card}>
+      {imageUri && (
+        <Image source={{ uri: imageUri }} style={styles.cardImage} />
+      )}
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         {onDelete && (
@@ -43,19 +53,19 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 4,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.textPrimary,
     flex: 1,
   },
@@ -64,8 +74,8 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 12,
     marginLeft: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   meta: {
     fontSize: 13,
@@ -76,5 +86,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
     marginVertical: 12,
+  },
+  cardImage: {
+    width: "100%",
+    height: 180,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    marginBottom: 12,
   },
 });

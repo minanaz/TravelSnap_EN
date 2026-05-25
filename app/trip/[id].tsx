@@ -1,11 +1,18 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import RatingStars from '@/components/RatingStars';
-import { useTrips } from '@/contexts/TripContext';
-import { useFavorites } from '@/hooks/useFavorites';
-import { Colors } from '@/constants/Colors';
+import RatingStars from "@/components/RatingStars";
+import { Colors } from "@/constants/Colors";
+import { useTrips } from "@/contexts/TripContext";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export default function TripDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,7 +26,7 @@ export default function TripDetailScreen() {
   if (!trip) {
     return (
       <>
-        <Stack.Screen options={{ title: 'Trip not found' }} />
+        <Stack.Screen options={{ title: "Trip not found" }} />
         <View style={styles.screen}>
           <Text style={styles.errorText}>Trip not found.</Text>
           <Pressable style={styles.backButton} onPress={() => router.back()}>
@@ -30,7 +37,7 @@ export default function TripDetailScreen() {
     );
   }
 
-  const { title, destination, date, rating } = trip;
+  const { title, destination, date, rating, imageUri } = trip;
 
   return (
     <>
@@ -43,9 +50,12 @@ export default function TripDetailScreen() {
                 <ActivityIndicator size="small" color={Colors.textSecondary} />
               </View>
             ) : (
-              <Pressable onPress={() => toggleFavorite(id)} style={styles.heartButton}>
+              <Pressable
+                onPress={() => toggleFavorite(id)}
+                style={styles.heartButton}
+              >
                 <Ionicons
-                  name={favorited ? 'heart' : 'heart-outline'}
+                  name={favorited ? "heart" : "heart-outline"}
                   size={24}
                   color={favorited ? Colors.accent : Colors.textSecondary}
                 />
@@ -55,6 +65,14 @@ export default function TripDetailScreen() {
       />
 
       <View style={styles.screen}>
+        {imageUri ? (
+          <Image source={{ uri: trip.imageUri }} style={styles.heroImage} />
+        ) : (
+          <View style={styles.placeholder}>
+            <Ionicons name="image-outline" size={64} color={Colors.primary} />
+            <Text style={styles.placeholderText}>No photo</Text>
+          </View>
+        )}
         <Text style={styles.tripTitle}>{title}</Text>
 
         <View style={styles.metaRow}>
@@ -87,13 +105,13 @@ const styles = StyleSheet.create({
   },
   tripTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.textPrimary,
     marginBottom: 16,
   },
   metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     marginBottom: 8,
   },
@@ -112,11 +130,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: 8,
     padding: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   backButtonText: {
     color: Colors.background,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   heartButton: {
@@ -127,5 +145,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.textSecondary,
     marginBottom: 24,
+  },
+  heroImage: {
+    width: "100%",
+    height: 250,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  placeholder: {
+    width: "100%",
+    height: 250,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  placeholderText: {
+    color: Colors.textSecondary,
+    marginTop: 8,
+    fontSize: 14,
   },
 });
