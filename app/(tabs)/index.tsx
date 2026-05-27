@@ -1,23 +1,40 @@
-import { ScrollView, StyleSheet, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTrips } from '@/contexts/TripContext';
-import TripCard from '@/components/TripCard';
-import ScreenHeader from '@/components/ScreenHeader';
-import EmptyState from '@/components/ui/EmptyState';
-import TripStats from '@/components/TripStats';
-import { Colors } from '@/constants/Colors';
+import ScreenHeader from "@/components/ScreenHeader";
+import TripCard from "@/components/TripCard";
+import TripStats from "@/components/TripStats";
+import EmptyState from "@/components/ui/EmptyState";
+import { Colors } from "@/constants/Colors";
+import { useTrips } from "@/contexts/TripContext";
 
 export default function HomeScreen() {
-  const { trips, deleteTrip } = useTrips();
+  const { trips, loading, deleteTrip } = useTrips();
   const router = useRouter();
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScreenHeader tripCount={trips.length} />
-      <ScrollView contentContainerStyle={styles.content} style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        style={styles.container}
+      >
         <TripStats trips={trips} />
 
         {trips.length === 0 ? (
@@ -30,24 +47,18 @@ export default function HomeScreen() {
           trips.map((trip) => (
             <Link
               key={trip.id}
-              href={{ pathname: '/trip/[id]', params: { id: trip.id } }}
+              href={{ pathname: "/trip/[id]", params: { id: trip.id } }}
               asChild
             >
               <Pressable>
-                <TripCard
-                  {...trip}
-                  onDelete={() => deleteTrip(trip.id)}
-                />
+                <TripCard {...trip} onDelete={() => deleteTrip(trip.id)} />
               </Pressable>
             </Link>
           ))
         )}
       </ScrollView>
 
-      <Pressable
-        style={styles.fab}
-        onPress={() => router.push('/add-trip')}
-      >
+      <Pressable style={styles.fab} onPress={() => router.push("/add-trip")}>
         <Ionicons name="add" size={28} color={Colors.background} />
       </Pressable>
     </SafeAreaView>
@@ -68,19 +79,25 @@ const styles = StyleSheet.create({
     paddingBottom: 96,
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 24,
     right: 24,
     width: 56,
     height: 56,
     borderRadius: 28,
     backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 6,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.background,
   },
 });
